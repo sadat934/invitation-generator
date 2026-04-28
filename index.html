@@ -257,7 +257,7 @@ Your presence will highly be appreciated.
   }
 }
 
-function shareViaWhatsApp() {
+async function shareViaWhatsApp() {
   const guest = document.getElementById('guest-display-eng').textContent.trim();
   const guestName = guest === '................................' ? 'Guest' : guest;
   
@@ -289,8 +289,81 @@ Your presence will highly be appreciated.
 📞 Ritah (Bride): 0704598555 / 0784598555
 📞 Karungi Sandra (Treasurer): 0706334880 / 0785196252`;
 
-  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-  window.open(whatsappUrl, '_blank');
+  // Try Web Share API first (works on mobile with image support)
+  if (navigator.share && navigator.canShare) {
+    try {
+      const card = document.getElementById('invitation-card');
+      const blob = await domtoimage.toBlob(card, {
+        quality: 1,
+        width: card.offsetWidth * 2,
+        height: card.offsetHeight * 2,
+        style: {
+          transform: 'scale(2)',
+          transformOrigin: 'top left',
+          width: card.offsetWidth + 'px',
+          height: card.offsetHeight + 'px'
+        }
+      });
+      
+      const file = new File([blob], 'invitation.png', { type: 'image/png' });
+      const shareData = {
+        files: [file],
+        text: message,
+        title: 'Wedding Invitation'
+      };
+      
+      if (navigator.canShare(shareData)) {
+        await navigator.share(shareData);
+        return;
+      }
+    } catch (err) {
+      console.log('Web Share API failed, falling back to download method:', err);
+    }
+  }
+  
+  // Fallback: Download image and open WhatsApp
+  const card = document.getElementById('invitation-card');
+  const fileName = `Ritah_Robinson_Invitation_${guestName.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 30)}.png`;
+  
+  try {
+    const dataUrl = await domtoimage.toPng(card, {
+      quality: 1,
+      width: card.offsetWidth * 2,
+      height: card.offsetHeight * 2,
+      style: {
+        transform: 'scale(2)',
+        transformOrigin: 'top left',
+        width: card.offsetWidth + 'px',
+        height: card.offsetHeight + 'px'
+      }
+    });
+    
+    // Download the image
+    const link = document.createElement('a');
+    link.download = fileName;
+    link.href = dataUrl;
+    link.click();
+    
+    // Show instructions
+    const msg = document.getElementById('share-msg');
+    msg.innerHTML = `✓ Image downloaded!<br><small>Opening WhatsApp... Please attach the downloaded image manually.</small>`;
+    msg.style.display = 'block';
+    
+    // Wait a moment then open WhatsApp
+    setTimeout(() => {
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+      
+      setTimeout(() => {
+        msg.style.display = 'none';
+        msg.innerHTML = '✓ Share text copied to clipboard!';
+      }, 5000);
+    }, 1000);
+    
+  } catch (error) {
+    console.error('Share failed:', error);
+    alert('Unable to generate image. Please try the Download button instead.');
+  }
 }
 
 function downloadCard(event) {
