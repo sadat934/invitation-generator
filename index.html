@@ -2,1022 +2,705 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>AI Invitation Builder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Introduction Ceremony Invitation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: system-ui, sans-serif; background: #f4f4f0; }
-
-    #app {
-      display: flex;
-      height: 100vh;
-      border: 1px solid #ddd;
-      overflow: hidden;
-      background: #fff;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    /* ── Sidebar ── */
-    #sidebar {
-      width: 300px;
-      min-width: 300px;
-      border-right: 1px solid #e5e5e5;
+    body {
+      font-family: 'Cormorant Garamond', serif;
+      background-color: #0f2e20;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      background: #fff;
-    }
-    #sidebar-header {
-      padding: 16px;
-      border-bottom: 1px solid #eee;
-    }
-    #sidebar-header h2 { font-size: 15px; font-weight: 600; color: #111; }
-    #sidebar-header p  { font-size: 12px; color: #777; margin-top: 3px; }
-
-    #sidebar-body { flex: 1; overflow-y: auto; padding: 14px; }
-
-    /* ── Canvas area ── */
-    #canvas-area {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      background: #f0f0ec;
-    }
-    #canvas-toolbar {
-      display: flex;
-      gap: 8px;
       align-items: center;
-      padding: 10px 14px;
-      background: #fff;
-      border-bottom: 1px solid #e5e5e5;
+      justify-content: center;
+      padding: 3rem 1rem;
+      color: #a67b5b;
     }
-    #canvas-wrap {
+
+    .controls-container {
+      margin-bottom: 2rem;
+      width: 100%;
+      max-width: 42rem;
+      background-color: #fdfbf7;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      border: 2px solid #a67b5b;
+    }
+
+    @media (min-width: 640px) {
+      .controls-container {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .input-group {
       flex: 1;
-      overflow: auto;
+      width: 100%;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: #0f2e20;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .input-field {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid #a67b5b;
+      padding: 0.5rem;
+      font-size: 1.125rem;
+      color: #0f2e20;
+      font-family: 'Cormorant Garamond', serif;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .input-field:focus {
+      border-bottom-color: #0f2e20;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 0.75rem;
+      width: 100%;
+    }
+
+    @media (min-width: 640px) {
+      .button-group {
+        width: auto;
+      }
+    }
+
+    .btn {
+      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 24px;
-      position: relative;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      font-family: 'Cormorant Garamond', serif;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+      font-size: 1rem;
     }
 
-    /* ── Image container ── */
-    #img-container {
+    .btn-primary {
+      background-color: #0f2e20;
+      color: #fdfbf7;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #1a4a35;
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: #0f2e20;
+      border: 2px solid #0f2e20;
+    }
+
+    .btn-secondary:hover {
+      background-color: #0f2e20;
+      color: #fdfbf7;
+    }
+
+    .card-wrapper {
       position: relative;
-      display: inline-block;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.14);
-      border-radius: 4px;
+      width: 100%;
+      max-width: 42rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .ribbon-left, .ribbon-right {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 2rem;
+      height: 8rem;
+      background-color: #0a1f15;
+      z-index: 20;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    }
+
+    .ribbon-left {
+      left: -1.25rem;
+      border-radius: 0 0.375rem 0.375rem 0;
+    }
+
+    .ribbon-right {
+      right: -1.25rem;
+      border-radius: 0.375rem 0 0 0.375rem;
+    }
+
+    @media (min-width: 1024px) {
+      .ribbon-left {
+        left: -2.5rem;
+        width: 4rem;
+      }
+      .ribbon-right {
+        right: -2.5rem;
+        width: 4rem;
+      }
+    }
+
+    .invitation-card {
+      position: relative;
+      background: radial-gradient(circle at center, #ffffff 0%, #fdfbf7 100%);
+      padding: 1rem;
+      border: 12px solid #0f2e20;
+      z-index: 10;
       overflow: hidden;
     }
-    #inv-img {
-      display: block;
-      max-width: 100%;
-      max-height: 480px;
-      pointer-events: none;
-      user-select: none;
+
+    @media (min-width: 640px) {
+      .invitation-card {
+        padding: 2rem;
+      }
     }
 
-    /* ── Upload zone ── */
-    .upload-zone {
-      border: 2px dashed #ccc;
-      border-radius: 10px;
-      padding: 32px 16px;
-      text-align: center;
-      cursor: pointer;
-      transition: background 0.15s;
-      margin-bottom: 14px;
-    }
-    .upload-zone:hover { background: #f9f9f7; }
-    .upload-zone svg   { margin: 0 auto 10px; display: block; opacity: 0.4; }
-    .upload-zone p     { font-size: 13px; color: #666; }
-    .upload-zone span  { font-size: 11px; color: #aaa; }
-
-    /* ── Field cards ── */
-    .field-card {
-      background: #f9f9f7;
-      border-radius: 8px;
-      padding: 10px 12px;
-      margin-bottom: 8px;
-      cursor: pointer;
-      border: 1.5px solid transparent;
-      transition: border-color 0.15s;
-    }
-    .field-card:hover  { border-color: #ccc; }
-    .field-card.active { border-color: #378ADD; background: #eef5fd; }
-    .field-card label {
-      font-size: 11px;
-      font-weight: 600;
-      color: #888;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      display: block;
-      margin-bottom: 5px;
-    }
-    .field-card input {
-      width: 100%;
-      font-size: 13px;
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      padding: 6px 8px;
-      color: #111;
-      outline: none;
-    }
-    .field-card input:focus {
-      border-color: #378ADD;
-      box-shadow: 0 0 0 2px rgba(55,138,221,0.15);
+    @media (min-width: 768px) {
+      .invitation-card {
+        padding: 3rem;
+      }
     }
 
-    /* ── Draggable overlays ── */
-    .overlay-text {
-      position: absolute;
-      cursor: move;
-      user-select: none;
-      white-space: pre;
-      line-height: 1.2;
-      padding: 3px 5px;
-      border-radius: 3px;
-      border: 1.5px solid transparent;
-      transition: border-color 0.1s;
-    }
-    .overlay-text:hover    { border-color: rgba(55,138,221,0.4); }
-    .overlay-text.selected { border-color: #378ADD; background: rgba(55,138,221,0.07); }
-    .overlay-text.editing  {
-      cursor: text;
-      border-color: #378ADD;
-      background: rgba(255,255,255,0.92);
-      outline: none;
-    }
-
-    /* ── Style panel ── */
-    .style-row {
+    .inner-border {
+      position: relative;
+      border: 3px solid #a67b5b;
+      padding: 1.5rem 2.5rem;
       display: flex;
-      gap: 8px;
-      margin-bottom: 10px;
+      flex-direction: column;
       align-items: center;
-    }
-    .style-row label { font-size: 11px; color: #777; min-width: 38px; }
-    .style-row select,
-    .style-row input[type=number] {
-      font-size: 12px;
-      padding: 4px 6px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      background: #fff;
-      color: #111;
-      outline: none;
-      flex: 1;
+      justify-content: center;
+      text-align: center;
+      gap: 1.5rem;
+      background-color: rgba(253, 251, 247, 0.8);
+      backdrop-filter: blur(4px);
     }
 
-    .color-dot {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      border: 1.5px solid transparent;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-    .color-dot.sel {
-      border-color: #378ADD;
-      box-shadow: 0 0 0 2px rgba(55,138,221,0.3);
+    @media (min-width: 640px) {
+      .inner-border {
+        gap: 2rem;
+      }
     }
 
-    /* ── Buttons ── */
-    .btn {
-      font-size: 12px;
-      padding: 6px 12px;
-      border-radius: 7px;
-      border: 1px solid #ddd;
-      background: #fff;
-      color: #222;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      transition: background 0.12s;
+    /* Corner decorations */
+    .corner {
+      position: absolute;
+      width: 3rem;
+      height: 3rem;
+      border-color: #a67b5b;
     }
-    .btn:hover   { background: #f5f5f3; }
-    .btn.primary { background: #185FA5; color: #fff; border-color: #185FA5; }
-    .btn.primary:hover { background: #0C447C; }
-    .btn.sm { padding: 4px 9px; font-size: 11px; }
 
-    /* ── Misc ── */
-    .ai-badge {
-      font-size: 10px;
-      background: #eef5fd;
-      color: #185FA5;
-      border-radius: 999px;
-      padding: 2px 8px;
-      font-weight: 600;
+    .corner-tl {
+      top: 0.5rem;
+      left: 0.5rem;
+      border-top: 3px solid;
+      border-left: 3px solid;
     }
-    #status { font-size: 12px; color: #777; padding: 0 4px; flex: 1; }
-    .spinner {
-      width: 14px; height: 14px;
-      border: 2px solid #e5e5e5;
-      border-top-color: #378ADD;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      flex-shrink: 0;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .section-title {
-      font-size: 10px;
-      font-weight: 600;
-      color: #aaa;
+    .corner-tr {
+      top: 0.5rem;
+      right: 0.5rem;
+      border-top: 3px solid;
+      border-right: 3px solid;
+    }
+
+    .corner-bl {
+      bottom: 0.5rem;
+      left: 0.5rem;
+      border-bottom: 3px solid;
+      border-left: 3px solid;
+    }
+
+    .corner-br {
+      bottom: 0.5rem;
+      right: 0.5rem;
+      border-bottom: 3px solid;
+      border-right: 3px solid;
+    }
+
+    .header-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: 3rem;
+      color: #0f2e20;
+      margin-bottom: 1rem;
+    }
+
+    @media (min-width: 640px) {
+      .header-title {
+        font-size: 3.75rem;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .header-title {
+        font-size: 4.5rem;
+      }
+    }
+
+    .divider-ornament {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .text-section {
+      width: 100%;
+    }
+
+    .text-runyoro {
+      font-weight: 700;
+      color: #b58b66;
+      font-size: 0.875rem;
+      line-height: 1.75;
       text-transform: uppercase;
-      letter-spacing: 0.07em;
-      margin: 14px 0 8px;
+      letter-spacing: 0.05em;
     }
-    .hint-chip {
-      font-size: 11px;
-      background: #f5f5f3;
-      border-radius: 999px;
-      padding: 3px 10px;
-      color: #777;
-      display: inline-flex;
+
+    @media (min-width: 640px) {
+      .text-runyoro {
+        font-size: 1rem;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .text-runyoro {
+        font-size: 1.125rem;
+      }
+    }
+
+    .guest-input-line {
+      padding: 0.5rem 0;
+    }
+
+    .guest-input-wrapper {
+      color: #0f2e20;
+      font-size: 1.125rem;
+      font-weight: 700;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 0.5rem;
+    }
+
+    @media (min-width: 640px) {
+      .guest-input-wrapper {
+        font-size: 1.25rem;
+      }
+    }
+
+    .guest-name-display {
+      display: inline-block;
+      border-bottom: 2px dotted #0f2e20;
+      min-width: 200px;
+      flex: 1;
+      text-align: center;
+      color: #0f2e20;
+      padding: 0 1rem;
+      margin-bottom: -0.25rem;
+    }
+
+    .couple-names {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: #0f2e20;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 1rem;
+    }
+
+    @media (min-width: 640px) {
+      .couple-names {
+        font-size: 1.875rem;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .couple-names {
+        font-size: 2.25rem;
+      }
+    }
+
+    .couple-separator {
+      font-size: 1.25rem;
+      text-transform: lowercase;
+      font-style: italic;
+      font-family: 'Cormorant Garamond', serif;
+      margin: 0.5rem 0;
+      display: block;
+    }
+
+    @media (min-width: 640px) {
+      .couple-separator {
+        font-size: 1.5rem;
+      }
+    }
+
+    .couple-separator-eng {
+      font-size: 1.25rem;
+      color: #b58b66;
+      margin: 0 1rem;
+    }
+
+    @media (min-width: 640px) {
+      .couple-separator-eng {
+        font-size: 1.5rem;
+      }
+    }
+
+    .divider-line {
+      width: 66.666667%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, #a67b5b, transparent);
+      margin: 0.5rem auto;
+    }
+
+    .contacts-section {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       align-items: center;
-      gap: 4px;
-      margin-bottom: 8px;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+      border-top: 3px solid #a67b5b;
+      padding-top: 1.5rem;
+      position: relative;
     }
 
-    /* ── Mobile Responsive ── */
-    @media (max-width: 768px) {
-      #app {
-        flex-direction: column;
-        height: auto;
-        min-height: 100vh;
-      }
-
-      #sidebar {
-        width: 100%;
-        min-width: 100%;
-        border-right: none;
-        border-bottom: 1px solid #e5e5e5;
-        max-height: 50vh;
-        overflow-y: auto;
-      }
-
-      #sidebar-header {
-        padding: 12px 16px;
-      }
-
-      #sidebar-header h2 {
-        font-size: 16px;
-      }
-
-      #sidebar-body {
-        padding: 12px 16px;
-      }
-
-      #canvas-area {
-        flex: 1;
-        min-height: 50vh;
-      }
-
-      #canvas-toolbar {
-        flex-wrap: wrap;
-        padding: 8px 12px;
-        gap: 6px;
-      }
-
-      #status {
-        width: 100%;
-        order: -1;
-        margin-bottom: 4px;
-        font-size: 11px;
-      }
-
-      .btn {
-        font-size: 11px;
-        padding: 6px 10px;
-        flex: 1;
-      }
-
-      #canvas-wrap {
-        padding: 12px;
-      }
-
-      #inv-img {
-        max-width: 100%;
-        max-height: 60vh;
-      }
-
-      .upload-zone {
-        padding: 24px 12px;
-      }
-
-      .upload-zone svg {
-        width: 32px;
-        height: 32px;
-      }
-
-      .field-card {
-        padding: 8px 10px;
-      }
-
-      .field-card input {
-        font-size: 14px;
-      }
-
-      .style-row {
-        flex-wrap: wrap;
-      }
-
-      .style-row label {
-        min-width: 100%;
-        margin-bottom: 4px;
-      }
-
-      .overlay-text {
-        min-width: 60px;
-        font-size: 14px !important;
-        padding: 4px 6px;
-      }
-
-      /* Make color palette scrollable on mobile */
-      #color-palette {
-        overflow-x: auto;
-        flex-wrap: nowrap;
-        padding-bottom: 4px;
-      }
-
-      .color-dot {
-        flex-shrink: 0;
-      }
-
-      /* Improve touch targets */
-      .btn, .field-card, .overlay-text, .color-dot {
-        min-height: 36px;
-      }
-
-      /* Stack buttons vertically on very small screens */
-      @media (max-width: 480px) {
-        #canvas-toolbar {
-          flex-direction: column;
-        }
-
-        .btn {
-          width: 100%;
-          justify-content: center;
-        }
-
-        #sidebar {
-          max-height: 60vh;
-        }
-
-        .field-card input {
-          font-size: 16px; /* Prevent zoom on iOS */
-        }
-
-        .style-row input[type=number],
-        .style-row select {
-          font-size: 16px; /* Prevent zoom on iOS */
-        }
-      }
-    }
-
-    /* Landscape mobile optimization */
-    @media (max-width: 768px) and (orientation: landscape) {
-      #app {
+    @media (min-width: 768px) {
+      .contacts-section {
         flex-direction: row;
       }
+    }
 
-      #sidebar {
-        width: 280px;
-        min-width: 280px;
-        max-height: 100vh;
-        border-right: 1px solid #e5e5e5;
-        border-bottom: none;
-      }
+    .contacts-ornament {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translate(-50%, -50%);
+      background-color: #fdfbf7;
+      padding: 0 1rem;
+    }
 
-      #canvas-area {
-        min-height: auto;
-      }
+    .contact-box {
+      flex: 1;
+      text-align: center;
+      font-weight: 700;
+      color: #0f2e20;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+    }
 
-      #inv-img {
-        max-height: 70vh;
+    .contact-name {
+      margin-bottom: 0.25rem;
+      font-size: 1.125rem;
+    }
+
+    .contact-role {
+      color: #b58b66;
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+      text-transform: lowercase;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+    }
+
+    .contact-phone {
+      font-size: 0.875rem;
+    }
+
+    .contact-divider {
+      display: none;
+      width: 3px;
+      height: 5rem;
+      background-color: #0f2e20;
+    }
+
+    @media (min-width: 768px) {
+      .contact-divider {
+        display: block;
       }
     }
 
-    /* Tablet optimization */
-    @media (min-width: 769px) and (max-width: 1024px) {
-      #sidebar {
-        width: 280px;
-        min-width: 280px;
-      }
-
-      #inv-img {
-        max-height: 60vh;
-      }
+    .space-y-4 > * + * {
+      margin-top: 1rem;
     }
   </style>
 </head>
 <body>
-
-<div id="app">
-
-  <!-- ═══════════════════════════ SIDEBAR ═══════════════════════════ -->
-  <div id="sidebar">
-    <div id="sidebar-header">
-      <h2>AI Invitation Builder</h2>
-      <p>Upload a template — AI detects where to type</p>
+  <!-- Controls Container -->
+  <div class="controls-container">
+    <div class="input-group">
+      <label for="guestInput" class="input-label">Who are you inviting?</label>
+      <input
+        id="guestInput"
+        type="text"
+        class="input-field"
+        placeholder="e.g., Mr. John Doe"
+        oninput="updateGuestName()"
+      />
     </div>
-
-    <div id="sidebar-body">
-
-      <!-- Upload zone -->
-      <div class="upload-zone" onclick="document.getElementById('file-in').click()">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="1.5">
-          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-          <polyline points="17 8 12 3 7 8"/>
-          <line x1="12" y1="3" x2="12" y2="15"/>
+    <div class="button-group">
+      <button class="btn btn-primary" onclick="downloadCard()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
         </svg>
-        <p>Click to upload invitation image</p>
-        <span>PNG, JPG, WEBP supported</span>
-      </div>
-      <input type="file" id="file-in" accept="image/*" style="display:none">
-
-      <!-- Detected fields -->
-      <div id="fields-section" style="display:none">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-          <span class="section-title" style="margin:0">Detected fields</span>
-          <span class="ai-badge">AI</span>
-        </div>
-        <div class="hint-chip">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="12" y1="8" x2="12" y2="12"/>
-            <line x1="12" y1="16" x2="12.01" y2="16"/>
-          </svg>
-          Click any overlay on the image to edit
-        </div>
-        <div id="fields-list"></div>
-        <button class="btn sm"
-                style="margin-top:6px;width:100%;justify-content:center"
-                onclick="addCustomField()">+ Add custom text</button>
-      </div>
-
-      <!-- Style panel (shown when an overlay is selected) -->
-      <div id="style-section" style="display:none;margin-top:14px">
-        <div class="section-title">Selected text style</div>
-
-        <div class="style-row">
-          <label>Font</label>
-          <select id="s-font" onchange="applyStyle('fontFamily', this.value)">
-            <option value="Georgia,serif">Georgia</option>
-            <option value="'Palatino Linotype',serif">Palatino</option>
-            <option value="'Times New Roman',serif">Times New Roman</option>
-            <option value="Arial,sans-serif">Arial</option>
-            <option value="'Trebuchet MS',sans-serif">Trebuchet</option>
-            <option value="'Courier New',monospace">Courier New</option>
-            <option value="Impact,sans-serif">Impact</option>
-          </select>
-        </div>
-
-        <div class="style-row">
-          <label>Size</label>
-          <input type="number" id="s-size" min="8" max="120" value="20"
-                 onchange="applyStyle('fontSize', this.value + 'px')">
-        </div>
-
-        <div class="style-row">
-          <label>Bold</label>
-          <input type="checkbox" id="s-bold" style="width:auto"
-                 onchange="applyStyle('fontWeight', this.checked ? '700' : '400')">
-        </div>
-
-        <div class="style-row">
-          <label>Italic</label>
-          <input type="checkbox" id="s-italic" style="width:auto"
-                 onchange="applyStyle('fontStyle', this.checked ? 'italic' : 'normal')">
-        </div>
-
-        <div class="style-row" style="flex-wrap:wrap;gap:5px;align-items:center">
-          <label>Color</label>
-          <div style="display:flex;flex-wrap:wrap;gap:4px" id="color-palette"></div>
-        </div>
-
-        <div class="style-row">
-          <label>Align</label>
-          <select id="s-align" onchange="applyStyle('textAlign', this.value)">
-            <option value="left">Left</option>
-            <option value="center">Center</option>
-            <option value="right">Right</option>
-          </select>
-        </div>
-      </div>
-
-    </div><!-- /sidebar-body -->
-  </div><!-- /sidebar -->
-
-  <!-- ═══════════════════════════ CANVAS ═══════════════════════════ -->
-  <div id="canvas-area">
-
-    <div id="canvas-toolbar">
-      <div id="status">Upload an invitation image to get started</div>
-      <button class="btn" onclick="downloadImg()" id="dl-btn" style="display:none">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="2">
-          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-          <polyline points="7 10 12 15 17 10"/>
-          <line x1="12" y1="3" x2="12" y2="15"/>
-        </svg>
-        Download
+        <span>Save</span>
       </button>
-      <button class="btn primary" onclick="printImg()" id="print-btn" style="display:none">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="2">
-          <polyline points="6 9 6 2 18 2 18 9"/>
-          <path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/>
-          <rect x="6" y="14" width="12" height="8"/>
+      <button class="btn btn-secondary" onclick="shareCard()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="18" cy="5" r="3"></circle>
+          <circle cx="6" cy="12" r="3"></circle>
+          <circle cx="18" cy="19" r="3"></circle>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
         </svg>
-        Print
+        <span>Share</span>
       </button>
     </div>
-
-    <div id="canvas-wrap">
-      <div id="empty-state" style="text-align:center;color:#bbb">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="1"
-             style="margin:0 auto 12px;display:block;opacity:0.3">
-          <rect x="3" y="3" width="18" height="18" rx="2"/>
-          <circle cx="8.5" cy="8.5" r="1.5"/>
-          <polyline points="21 15 16 10 5 21"/>
-        </svg>
-        <p style="font-size:13px">Your invitation will appear here</p>
-      </div>
-
-      <div id="img-container" style="display:none">
-        <img id="inv-img" alt="Invitation template">
-      </div>
-    </div>
-
-  </div><!-- /canvas-area -->
-</div><!-- /app -->
-
-<!-- ═══════════════════════════ SCRIPT ═══════════════════════════ -->
-<script>
-  // ── Config ──────────────────────────────────────────────────────
-  // IMPORTANT: Replace this with your actual Anthropic API key.
-  // For production apps, never expose the API key in client-side code.
-  // Use a backend proxy instead.
-  const ANTHROPIC_API_KEY = 'YOUR_ANTHROPIC_API_KEY_HERE';
-
-  const COLORS = [
-    '#000000','#FFFFFF','#333333','#8B0000',
-    '#000080','#4a3728','#D4AF37','#555555',
-    '#1a472a','#7b3f00'
-  ];
-
-  // ── State ────────────────────────────────────────────────────────
-  let overlays     = [];
-  let selId        = null;
-  let dragState    = null;
-  let fieldCounter = 0;
-
-  const container  = document.getElementById('img-container');
-  const img        = document.getElementById('inv-img');
-
-  // ── Build color palette ──────────────────────────────────────────
-  const palette = document.getElementById('color-palette');
-  COLORS.forEach(c => {
-    const dot = document.createElement('div');
-    dot.className = 'color-dot';
-    dot.style.background = c;
-    dot.dataset.c = c;
-    dot.title = c;
-    dot.onclick = () => pickColor(c);
-    palette.appendChild(dot);
-  });
-
-  // ── File upload ──────────────────────────────────────────────────
-  document.getElementById('file-in').addEventListener('change', e => {
-    const f = e.target.files[0];
-    if (!f) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-      img.src = ev.target.result;
-      img.onload = () => {
-        container.style.display = 'inline-block';
-        document.getElementById('empty-state').style.display = 'none';
-        document.getElementById('dl-btn').style.display   = '';
-        document.getElementById('print-btn').style.display = '';
-        overlays = []; renderOverlays(); renderFields();
-        analyzeWithClaude(ev.target.result, f.type);
-      };
-    };
-    reader.readAsDataURL(f);
-  });
-
-  // ── AI analysis ──────────────────────────────────────────────────
-  async function analyzeWithClaude(b64full, mimeType) {
-    setStatus('Analyzing your invitation with AI…', true);
-    document.getElementById('fields-section').style.display = 'none';
-    const b64 = b64full.split(',')[1];
-
-    try {
-      const resp = await fetch('https://api.anthropic.com/v1/messages', {
-        method : 'POST',
-        headers: {
-          'Content-Type'      : 'application/json',
-          'x-api-key'         : ANTHROPIC_API_KEY,
-          'anthropic-version' : '2023-06-01'
-        },
-        body: JSON.stringify({
-          model     : 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          system    : `You are an invitation template analyzer. Analyze the invitation image and
-identify ALL blank/fillable areas — these include: dashed lines (------), dotted lines (......),
-underscores (____), blank spaces after labels like "Name:", "Date:", "To:",
-bracketed placeholders like [Name] or {Guest}, and any other obvious fill-in spots.
-
-Return ONLY a JSON array. No markdown, no explanation. Each item:
-{"id":"f1","label":"Guest Name","hint":"e.g. John Smith","x_pct":0.5,"y_pct":0.3,"suggested":""}
-
-x_pct and y_pct are 0-1 floats representing position as fraction of image width/height
-where the text should be placed. Be precise based on where the blank/dash/dot line
-actually is in the image.`,
-          messages: [{
-            role   : 'user',
-            content: [
-              { type: 'image', source: { type: 'base64', media_type: mimeType, data: b64 } },
-              { type: 'text',  text  : 'Analyze this invitation. Find every fillable blank, dash line, dotted line, underscore area, or placeholder. Return the JSON array only.' }
-            ]
-          }]
-        })
-      });
-
-      const data   = await resp.json();
-      const txt    = data.content?.find(b => b.type === 'text')?.text || '[]';
-      let fields;
-      try   { fields = JSON.parse(txt.replace(/```json|```/g, '').trim()); }
-      catch { fields = []; }
-
-      if (!Array.isArray(fields) || fields.length === 0) {
-        setStatus('No fillable fields auto-detected. Add text manually.');
-        addDefaultField();
-      } else {
-        setStatus(`Found ${fields.length} fillable field${fields.length > 1 ? 's' : ''} — click any to edit`);
-        fields.forEach(f => addOverlayFromField(f));
-        document.getElementById('fields-section').style.display = '';
-        renderFields();
-      }
-    } catch (err) {
-      console.error(err);
-      setStatus('AI analysis failed. Add text manually.');
-      addDefaultField();
-      document.getElementById('fields-section').style.display = '';
-    }
-  }
-
-  // ── Overlay helpers ──────────────────────────────────────────────
-  function addOverlayFromField(f) {
-    const dw = img.offsetWidth, dh = img.offsetHeight;
-    fieldCounter++;
-    overlays.push({
-      id        : 'ov' + fieldCounter,
-      fieldId   : 'fld' + fieldCounter,
-      label     : f.label || 'Field ' + fieldCounter,
-      text      : f.suggested || '',
-      x         : Math.round((f.x_pct || 0.5) * dw),
-      y         : Math.round((f.y_pct || 0.3) * dh),
-      fontSize  : '20',
-      fontFamily: 'Georgia,serif',
-      color     : '#000000',
-      fontWeight: '400',
-      fontStyle : 'normal',
-      textAlign : 'center'
-    });
-    renderOverlays();
-    renderFields();
-  }
-
-  function addDefaultField() {
-    fieldCounter++;
-    const dw = img.offsetWidth, dh = img.offsetHeight;
-    overlays.push({
-      id        : 'ov' + fieldCounter,
-      fieldId   : 'fld' + fieldCounter,
-      label     : 'Text',
-      text      : 'Your Text Here',
-      x         : dw / 2 - 60,
-      y         : dh / 2,
-      fontSize  : '22',
-      fontFamily: 'Georgia,serif',
-      color     : '#000000',
-      fontWeight: '400',
-      fontStyle : 'normal',
-      textAlign : 'center'
-    });
-    document.getElementById('fields-section').style.display = '';
-    renderOverlays();
-    renderFields();
-  }
-
-  function addCustomField() { addDefaultField(); selectOverlay(overlays[overlays.length - 1].id); }
-
-  // ── Render overlays on canvas ────────────────────────────────────
-  function renderOverlays() {
-    document.querySelectorAll('.overlay-text').forEach(e => e.remove());
-    overlays.forEach(ov => createOverlayEl(ov));
-  }
-
-  function createOverlayEl(ov) {
-    const el = document.createElement('div');
-    el.className      = 'overlay-text' + (ov.id === selId ? ' selected' : '');
-    el.id             = 'el-' + ov.id;
-    el.contentEditable = 'false';
-    el.textContent    = ov.text || '[' + ov.label + ']';
-    applyOvStyle(el, ov);
-    el.style.left = ov.x + 'px';
-    el.style.top  = ov.y + 'px';
-
-    // Single click → select & start drag
-    el.addEventListener('mousedown', e => {
-      e.stopPropagation();
-      if (el.contentEditable === 'true') return;
-      selectOverlay(ov.id);
-      dragState = { id: ov.id, startX: e.clientX - ov.x, startY: e.clientY - ov.y };
-    });
-
-    // Touch support for mobile
-    el.addEventListener('touchstart', e => {
-      e.stopPropagation();
-      if (el.contentEditable === 'true') return;
-      selectOverlay(ov.id);
-      const touch = e.touches[0];
-      dragState = { id: ov.id, startX: touch.clientX - ov.x, startY: touch.clientY - ov.y };
-    }, { passive: true });
-
-    // Double click → inline edit
-    el.addEventListener('dblclick', e => {
-      e.stopPropagation();
-      selectOverlay(ov.id);
-      el.contentEditable = 'true';
-      el.classList.add('editing');
-      el.focus();
-      // Select all text
-      const range = document.createRange();
-      range.selectNodeContents(el);
-      const sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(range);
-
-      el.addEventListener('blur', () => {
-        el.contentEditable = 'false';
-        el.classList.remove('editing');
-        ov.text = el.textContent;
-        syncFieldInput(ov.id, ov.text);
-      }, { once: true });
-
-      el.addEventListener('keydown', ke => {
-        if (ke.key === 'Enter' && !ke.shiftKey) { ke.preventDefault(); el.blur(); }
-        if (ke.key === 'Escape') el.blur();
-      });
-    });
-
-    // Long press on mobile → edit
-    let longPressTimer;
-    el.addEventListener('touchstart', e => {
-      longPressTimer = setTimeout(() => {
-        e.stopPropagation();
-        selectOverlay(ov.id);
-        el.contentEditable = 'true';
-        el.classList.add('editing');
-        el.focus();
-        const range = document.createRange();
-        range.selectNodeContents(el);
-        const sel = window.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(range);
-
-        el.addEventListener('blur', () => {
-          el.contentEditable = 'false';
-          el.classList.remove('editing');
-          ov.text = el.textContent;
-          syncFieldInput(ov.id, ov.text);
-        }, { once: true });
-      }, 500);
-    }, { passive: true });
-
-    el.addEventListener('touchend', () => {
-      clearTimeout(longPressTimer);
-    });
-
-    el.addEventListener('touchmove', () => {
-      clearTimeout(longPressTimer);
-    });
-
-    container.appendChild(el);
-  }
-
-  function applyOvStyle(el, ov) {
-    el.style.fontSize   = (parseInt(ov.fontSize) || 20) + 'px';
-    el.style.fontFamily = ov.fontFamily || 'Georgia,serif';
-    el.style.color      = ov.color      || '#000';
-    el.style.fontWeight = ov.fontWeight || '400';
-    el.style.fontStyle  = ov.fontStyle  || 'normal';
-    el.style.textAlign  = ov.textAlign  || 'left';
-    el.style.minWidth   = '40px';
-  }
-
-  // ── Drag to reposition ───────────────────────────────────────────
-  document.addEventListener('mousemove', e => {
-    if (!dragState) return;
-    const ov = overlays.find(o => o.id === dragState.id);
-    if (!ov) return;
-    const maxX = container.offsetWidth  - 20;
-    const maxY = container.offsetHeight - 20;
-    ov.x = Math.max(0, Math.min(e.clientX - dragState.startX, maxX));
-    ov.y = Math.max(0, Math.min(e.clientY - dragState.startY, maxY));
-    const el = document.getElementById('el-' + ov.id);
-    if (el) { el.style.left = ov.x + 'px'; el.style.top = ov.y + 'px'; }
-  });
-  document.addEventListener('mouseup', () => { dragState = null; });
-
-  // Touch support for dragging
-  document.addEventListener('touchmove', e => {
-    if (!dragState) return;
-    const ov = overlays.find(o => o.id === dragState.id);
-    if (!ov) return;
-    const touch = e.touches[0];
-    const maxX = container.offsetWidth  - 20;
-    const maxY = container.offsetHeight - 20;
-    ov.x = Math.max(0, Math.min(touch.clientX - dragState.startX, maxX));
-    ov.y = Math.max(0, Math.min(touch.clientY - dragState.startY, maxY));
-    const el = document.getElementById('el-' + ov.id);
-    if (el) { el.style.left = ov.x + 'px'; el.style.top = ov.y + 'px'; }
-  }, { passive: true });
-  document.addEventListener('touchend', () => { dragState = null; });
-
-  // Click on empty canvas → deselect
-  container.addEventListener('click', e => {
-    if (e.target === container || e.target === img) {
-      selId = null;
-      document.querySelectorAll('.overlay-text').forEach(el => el.classList.remove('selected'));
-      document.getElementById('style-section').style.display = 'none';
-    }
-  });
-
-  // ── Selection ────────────────────────────────────────────────────
-  function selectOverlay(id) {
-    selId = id;
-    const ov = overlays.find(o => o.id === id);
-    document.querySelectorAll('.overlay-text').forEach(el => {
-      el.classList.toggle('selected', el.id === 'el-' + id);
-    });
-    document.querySelectorAll('.field-card').forEach(c => {
-      c.classList.toggle('active', c.dataset.ovid === id);
-    });
-    if (ov) populateStylePanel(ov);
-    document.getElementById('style-section').style.display = ov ? '' : 'none';
-  }
-
-  function populateStylePanel(ov) {
-    document.getElementById('s-font').value  = ov.fontFamily;
-    document.getElementById('s-size').value  = parseInt(ov.fontSize) || 20;
-    document.getElementById('s-bold').checked   = ov.fontWeight === '700';
-    document.getElementById('s-italic').checked = ov.fontStyle  === 'italic';
-    document.getElementById('s-align').value = ov.textAlign || 'left';
-    document.querySelectorAll('.color-dot').forEach(d => {
-      d.classList.toggle('sel', d.dataset.c === ov.color);
-    });
-  }
-
-  // ── Style application ────────────────────────────────────────────
-  function applyStyle(prop, val) {
-    if (!selId) return;
-    const ov = overlays.find(o => o.id === selId);
-    if (!ov) return;
-    ov[prop] = val;
-    const el = document.getElementById('el-' + ov.id);
-    if (el) applyOvStyle(el, ov);
-  }
-
-  function pickColor(c) {
-    document.querySelectorAll('.color-dot').forEach(d => d.classList.toggle('sel', d.dataset.c === c));
-    applyStyle('color', c);
-  }
-
-  // ── Render sidebar field list ────────────────────────────────────
-  function renderFields() {
-    const list = document.getElementById('fields-list');
-    list.innerHTML = '';
-    overlays.forEach(ov => {
-      const card = document.createElement('div');
-      card.className    = 'field-card' + (ov.id === selId ? ' active' : '');
-      card.dataset.ovid = ov.id;
-      card.onclick      = () => selectOverlay(ov.id);
-      card.innerHTML    = `
-        <label>${ov.label}</label>
-        <div style="display:flex;gap:5px;align-items:center">
-          <input type="text" value="${escHtml(ov.text)}"
-                 placeholder="Type here…"
-                 data-ovid="${ov.id}"
-                 onclick="event.stopPropagation()">
-          <button class="btn sm"
-                  style="padding:4px 7px;flex-shrink:0"
-                  onclick="event.stopPropagation();removeOverlay('${ov.id}')"
-                  title="Remove">✕</button>
-        </div>`;
-      card.querySelector('input').addEventListener('input', e => {
-        ov.text = e.target.value;
-        const el = document.getElementById('el-' + ov.id);
-        if (el) el.textContent = ov.text || '[' + ov.label + ']';
-      });
-      list.appendChild(card);
-    });
-  }
-
-  function syncFieldInput(ovId, text) {
-    const inp = document.querySelector(`input[data-ovid="${ovId}"]`);
-    if (inp) inp.value = text;
-  }
-
-  function removeOverlay(id) {
-    overlays = overlays.filter(o => o.id !== id);
-    const el = document.getElementById('el-' + id);
-    if (el) el.remove();
-    if (selId === id) { selId = null; document.getElementById('style-section').style.display = 'none'; }
-    renderFields();
-  }
-
-  // ── Utilities ────────────────────────────────────────────────────
-  function setStatus(msg, loading) {
-    const s = document.getElementById('status');
-    s.innerHTML = loading
-      ? `<div style="display:flex;align-items:center;gap:7px"><div class="spinner"></div><span>${msg}</span></div>`
-      : msg;
-  }
-
-  function escHtml(s) {
-    return (s || '')
-      .replace(/&/g,  '&amp;')
-      .replace(/</g,  '&lt;')
-      .replace(/>/g,  '&gt;')
-      .replace(/"/g,  '&quot;');
-  }
-
-  // ── Download ─────────────────────────────────────────────────────
-  async function downloadImg() {
-    if (!container.style.display || container.style.display === 'none') return;
-    const prevSel = selId;
-    selId = null;
-    document.querySelectorAll('.overlay-text').forEach(el => el.classList.remove('selected'));
-    setStatus('Generating image…', true);
-    try {
-      // html-to-image via ESM CDN
-      const { toPng } = await import('https://esm.sh/html-to-image@1.11.11');
-      const url = await toPng(container, { cacheBust: true, pixelRatio: 2, style: { display: 'inline-block' } });
-      const a   = document.createElement('a');
-      a.href     = url;
-      a.download = 'invitation.png';
-      a.click();
-      setStatus('Downloaded!');
-    } catch (e) {
-      setStatus('Use Print → Save as PDF to save your invitation.');
-      alert('Tip: Use the Print button and choose "Save as PDF".');
-    }
-    selId = prevSel;
-    if (selId) document.getElementById('el-' + selId)?.classList.add('selected');
-  }
-
-  // ── Print ────────────────────────────────────────────────────────
-  function printImg() {
-    const win = window.open('', '_blank');
-    const overlayHTML = overlays.map(ov => `
-      <div style="
-        position:absolute;
-        left:${ov.x}px; top:${ov.y}px;
-        font-size:${ov.fontSize}px;
-        font-family:${ov.fontFamily};
-        color:${ov.color};
-        font-weight:${ov.fontWeight};
-        font-style:${ov.fontStyle};
-        text-align:${ov.textAlign};
-        white-space:pre;
-        line-height:1.2">${escHtml(ov.text)}</div>`).join('');
-
-    win.document.write(`<!DOCTYPE html>
-<html><head>
-  <meta charset="utf-8">
-  <title>Invitation</title>
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { display:flex; justify-content:center; align-items:flex-start; padding:0; }
-    @media print { @page { margin:0; size:auto; } }
-  </style>
-</head><body>
-  <div style="position:relative;display:inline-block">
-    <img src="${img.src}" style="display:block;max-width:100vw" onload="window.print()">
-    ${overlayHTML}
   </div>
-</body></html>`);
-    win.document.close();
-  }
-</script>
+
+  <!-- Invitation Card -->
+  <div class="card-wrapper">
+    <!-- Ribbon decorations -->
+    <div class="ribbon-left"></div>
+    <div class="ribbon-right"></div>
+
+    <div class="invitation-card" id="invitationCard">
+      <div class="inner-border">
+        <!-- Corner decorations -->
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
+
+        <!-- Header -->
+        <div>
+          <h1 class="header-title">Invitation</h1>
+          <div class="divider-ornament">
+            <svg width="60" height="30" viewBox="0 0 100 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 25C20 15 35 15 50 25C65 35 80 35 80 25C80 15 65 15 50 25C35 35 20 35 20 25Z" stroke="#a67b5b" stroke-width="2"/>
+              <circle cx="50" cy="25" r="4" fill="#a67b5b"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Runyoro Section -->
+        <div class="text-section space-y-4">
+          <p class="text-runyoro">
+            Nokusemererwa kwingi Nokusiima<br/>Ruhanga Eka<br/>yo Munyoro Nomukyalya Anthony<br/>Mugisa Zahura Nibaraaliza
+          </p>
+          
+          <div class="guest-input-line">
+            <p class="guest-input-wrapper">
+              <span>Rev/Fr/Hon/Mr/Mrs/Shk</span>
+              <span class="guest-name-display" id="guestNameRunyoro"></span>
+            </p>
+          </div>
+
+          <p class="text-runyoro">
+            okwija hamukoro gwokweranga<br/>kwabaana baabo
+          </p>
+
+          <h2 class="couple-names">
+            Ritah Morgan Katusabe<br/><span class="couple-separator">hamu na</span>Robinson Ddumba
+          </h2>
+
+          <p class="text-runyoro" style="margin-top: 1rem;">
+            ebiro 27 june 2026. Okubaho kwawe<br/>kwomuhendo muno
+          </p>
+        </div>
+
+        <div class="divider-line"></div>
+
+        <!-- English Section -->
+        <div class="text-section space-y-4">
+          <p class="text-runyoro">
+            With great joy & gratitude to God the<br/>family of<br/>Mr & Mrs Anthony Mugisa Zahura invites
+          </p>
+
+          <div class="guest-input-line">
+            <p class="guest-input-wrapper">
+              <span>Rev/Fr/Hon/Mr/Mrs/Shk</span>
+              <span class="guest-name-display" id="guestNameEnglish"></span>
+            </p>
+          </div>
+
+          <p class="text-runyoro">
+            to the introduction ceremony of their<br/>daughter
+          </p>
+
+          <h2 class="couple-names">
+            Ritah Morgan Katusabe<br/><span class="couple-separator-eng">&</span>Robinson Ddumba
+          </h2>
+
+          <p class="text-runyoro" style="margin-top: 1rem;">
+            on 27th June 2026 at Elgon Hotel<br/>Mutungo<br/>
+            <span style="text-transform: none; font-weight: 500; margin-top: 0.5rem; display: block;">Your presence will highly be appreciated</span>
+          </p>
+        </div>
+
+        <!-- Contacts Section -->
+        <div class="contacts-section">
+          <div class="contacts-ornament">
+            <svg width="40" height="20" viewBox="0 0 100 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M30 25C30 15 40 15 50 25C60 35 70 35 70 25" stroke="#a67b5b" stroke-width="2"/>
+            </svg>
+          </div>
+
+          <div class="contact-box">
+            <p class="contact-name">Ritah</p>
+            <p class="contact-role">Bride to be</p>
+            <p class="contact-phone">Tel: 0704598555</p>
+            <p class="contact-phone">0784598555</p>
+          </div>
+
+          <div class="contact-divider"></div>
+
+          <div class="contact-box">
+            <p class="contact-name">Karungi Sandra</p>
+            <p class="contact-role">Treasurer</p>
+            <p class="contact-phone">Tel: 0706334880</p>
+            <p class="contact-phone">0785196252</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    function updateGuestName() {
+      const input = document.getElementById('guestInput');
+      const guestName = input.value.trim();
+      document.getElementById('guestNameRunyoro').textContent = guestName;
+      document.getElementById('guestNameEnglish').textContent = guestName;
+    }
+
+    async function downloadCard() {
+      const card = document.getElementById('invitationCard');
+      const guestName = document.getElementById('guestInput').value.trim() || 'Guest';
+      
+      try {
+        const canvas = await html2canvas(card, { scale: 2 });
+        const dataUrl = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.download = `Invitation-${guestName}.png`;
+        link.href = dataUrl;
+        link.click();
+      } catch (err) {
+        console.error('Failed to generate image', err);
+        alert('Failed to download image. Please try again.');
+      }
+    }
+
+    async function shareCard() {
+      const card = document.getElementById('invitationCard');
+      const guestName = document.getElementById('guestInput').value.trim() || 'Guest';
+      
+      const message = `🌟 *YOU ARE WARMLY INVITED* 🌟
+
+*Nokusemererwa kwingi Nokusiima Ruhanga Eka*
+yo Munyoro Nomukyala Anthony Mugisa Zahura Nibaraaliza
+
+Rev/Fr/Hon/Mr/Mrs/Shk ${guestName}
+
+okwija hamukoro gwokweranga kwabaana baabo
+*RITAH MORGAN KATUSABE HAMU NA ROBINSON DDUMBA*
+ebiro 27 june 2026
+Okubaho kwawe kwomuhendo muno
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+With great joy & gratitude to God the family of
+*Mr & Mrs Anthony Mugisa Zahura* invites you
+to the introduction ceremony of their daughter
+
+💍 *RITAH MORGAN KATUSABE & ROBINSON DDUMBA* 💍
+
+📅 *27th June 2026*
+📍 *Elgon Hotel, Mutungo*
+
+Your presence will highly be appreciated.
+
+📞 Ritah (Bride): 0704598555 / 0784598555
+📞 Karungi Sandra (Treasurer): 0706334880 / 0785196252`;
+
+      // Try Web Share API first (works on mobile with image support)
+      if (navigator.share && navigator.canShare) {
+        try {
+          const canvas = await html2canvas(card, { scale: 2 });
+          const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+          
+          const file = new File([blob], `Invitation-${guestName}.png`, { type: 'image/png' });
+          const shareData = {
+            files: [file],
+            text: message,
+            title: 'Introduction Ceremony Invitation'
+          };
+          
+          if (navigator.canShare(shareData)) {
+            await navigator.share(shareData);
+            return;
+          }
+        } catch (err) {
+          console.log('Web Share API failed, falling back to WhatsApp method:', err);
+        }
+      }
+      
+      // Fallback: Download image and open WhatsApp
+      try {
+        const canvas = await html2canvas(card, { scale: 2 });
+        const dataUrl = canvas.toDataURL('image/png');
+        
+        // Download the image
+        const link = document.createElement('a');
+        link.download = `Invitation-${guestName}.png`;
+        link.href = dataUrl;
+        link.click();
+        
+        // Wait a moment then open WhatsApp
+        setTimeout(() => {
+          const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+          window.open(whatsappUrl, '_blank');
+          
+          alert('Image downloaded! Please attach it manually in WhatsApp.');
+        }, 1000);
+        
+      } catch (err) {
+        console.error('Share failed:', err);
+        alert('Unable to share. Please use the Save button to download the image.');
+      }
+    }
+  </script>
 </body>
 </html>
