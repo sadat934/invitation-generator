@@ -562,22 +562,6 @@
       const card = document.getElementById('invitationCard');
       const guestName = document.getElementById('guestInput').value.trim() || 'Guest';
       
-      const message = `🌟 *YOU ARE WARMLY INVITED* 🌟
-
-With great joy & gratitude to God the family of
-*Mr & Mrs Anthony Mugisa Zahura* invites you
-to the introduction ceremony of their daughter
-
-💍 *RITAH MORGAN KATUSABE & ROBINSON DDUMBA* 💍
-
-📅 *27th June 2026*
-📍 *Elgon Hotel, Mutungo*
-
-Your presence will highly be appreciated.
-
-📞 Ritah (Bride): 0704598555 / 0784598555
-📞 Karungi Sandra (Treasurer): 0706334880 / 0785196252`;
-
       try {
         const canvas = await html2canvas(card, { 
           scale: 3,
@@ -592,7 +576,6 @@ Your presence will highly be appreciated.
           const file = new File([blob], `Invitation-${guestName}.jpg`, { type: 'image/jpeg' });
           const shareData = {
             files: [file],
-            text: message,
             title: 'Introduction Ceremony Invitation'
           };
           
@@ -610,8 +593,7 @@ Your presence will highly be appreciated.
         link.click();
         
         setTimeout(() => {
-          const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-          window.open(whatsappUrl, '_blank');
+          window.open('https://wa.me/', '_blank');
           alert('Image downloaded! Please attach it in WhatsApp.');
         }, 1000);
         
