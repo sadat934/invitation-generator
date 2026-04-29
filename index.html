@@ -169,34 +169,36 @@
     .invitation-card {
       position: relative;
       background: radial-gradient(circle at center, #ffffff 0%, #fdfbf7 100%);
-      padding: 2rem;
+      padding: 1.5rem;
       border: 12px solid #0f2e20;
       z-index: 10;
       overflow: hidden;
+      max-width: 600px;
+      margin: 0 auto;
     }
 
     @media (min-width: 640px) {
       .invitation-card {
-        padding: 2.5rem;
+        padding: 2rem;
       }
     }
 
     @media (min-width: 768px) {
       .invitation-card {
-        padding: 3rem;
+        padding: 2.5rem;
       }
     }
 
     .inner-border {
       position: relative;
       border: 3px solid #a67b5b;
-      padding: 2rem 2.5rem;
+      padding: 1.5rem 2rem;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      gap: 2rem;
+      gap: 1.25rem;
       background-color: rgba(253, 251, 247, 0.8);
       backdrop-filter: blur(4px);
     }
@@ -239,21 +241,15 @@
 
     .header-title {
       font-family: 'Great Vibes', cursive;
-      font-size: 4rem;
+      font-size: 3.5rem;
       color: #0f2e20;
-      margin-bottom: 1rem;
-    }
-
-    @media (min-width: 640px) {
-      .header-title {
-        font-size: 4.5rem;
-      }
+      margin-bottom: 0.75rem;
     }
 
     .divider-ornament {
       display: flex;
       justify-content: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }
 
     .text-section {
@@ -263,25 +259,25 @@
     .text-english {
       font-weight: 700;
       color: #b58b66;
-      font-size: 1.125rem;
-      line-height: 1.8;
+      font-size: 1rem;
+      line-height: 1.6;
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
 
     @media (min-width: 768px) {
       .text-english {
-        font-size: 1.25rem;
+        font-size: 1.125rem;
       }
     }
 
     .guest-input-line {
-      padding: 0.75rem 0;
+      padding: 0.5rem 0;
     }
 
     .guest-input-wrapper {
       color: #0f2e20;
-      font-size: 1.25rem;
+      font-size: 1.125rem;
       font-weight: 700;
       display: flex;
       flex-wrap: wrap;
@@ -292,7 +288,7 @@
 
     @media (min-width: 640px) {
       .guest-input-wrapper {
-        font-size: 1.375rem;
+        font-size: 1.25rem;
       }
     }
 
@@ -307,33 +303,33 @@
       margin-bottom: -0.25rem;
       font-family: 'Playfair Display', serif;
       font-weight: 700;
-      font-size: 1.5rem;
+      font-size: 1.375rem;
     }
 
     @media (min-width: 640px) {
       .guest-name-display {
-        font-size: 1.625rem;
+        font-size: 1.5rem;
       }
     }
 
     .couple-names {
       font-family: 'Playfair Display', serif;
-      font-size: 2rem;
+      font-size: 1.75rem;
       color: #0f2e20;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      margin-top: 1rem;
+      margin-top: 0.75rem;
     }
 
     @media (min-width: 640px) {
       .couple-names {
-        font-size: 2.25rem;
+        font-size: 2rem;
       }
     }
 
     .couple-separator {
-      font-size: 1.75rem;
+      font-size: 1.5rem;
       color: #b58b66;
       margin: 0 0.75rem;
       display: inline;
@@ -345,10 +341,10 @@
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      gap: 1.5rem;
-      margin-top: 2rem;
+      gap: 1.25rem;
+      margin-top: 1.25rem;
       border-top: 3px solid #a67b5b;
-      padding-top: 2rem;
+      padding-top: 1.25rem;
       position: relative;
     }
 
@@ -408,13 +404,13 @@
     }
 
     .space-y-4 > * + * {
-      margin-top: 1rem;
+      margin-top: 0.75rem;
     }
 
     .appreciation {
       text-transform: none;
       font-weight: 500;
-      margin-top: 1rem;
+      margin-top: 0.75rem;
       font-style: italic;
     }
   </style>
