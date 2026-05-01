@@ -701,7 +701,10 @@
   setInterval(updateVisitor, 30000);
 
   // Remove visitor when they leave
-  onDisconnect(ref(database, 'visitors/' + visitorId)).remove();
+onDisconnect(ref(database, 'visitors/' + visitorId)).update({
+  lastSeen: Date.now()
+});
+
 
   // Track when page becomes visible/hidden
   document.addEventListener('visibilitychange', function() {
