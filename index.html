@@ -603,15 +603,39 @@
       }
     }
 
+  </script>
 
-    const TRACKING_API = 'https://knowledgemgt.byethost22.com/track_visitor.php';
-  
+  <!-- 
+  FIREBASE TRACKING CODE FOR INVITATION-ENGLISH.HTML
+  Add this code BEFORE the closing </body> tag
+-->
+
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+  import { getDatabase, ref, set, onDisconnect } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+  // Your Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDobJoThr66qCjl7ULmA6q37iIPo5rSoIA",
+    authDomain: "onlinebus-b50f9.firebaseapp.com",
+    databaseURL: "https://onlinebus-b50f9-default-rtdb.firebaseio.com",
+    projectId: "onlinebus-b50f9",
+    storageBucket: "onlinebus-b50f9.firebasestorage.app",
+    messagingSenderId: "522275438422",
+    appId: "1:522275438422:web:bc748e514a1074117ea0f7"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const database = getDatabase(app);
+
+  // Generate unique visitor ID
   let visitorId = localStorage.getItem('visitor_id');
   if (!visitorId) {
     visitorId = 'visitor_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     localStorage.setItem('visitor_id', visitorId);
   }
-  
+
+  // Detect device and browser
   function getDeviceInfo() {
     const ua = navigator.userAgent;
     let device = 'Desktop';
@@ -640,40 +664,55 @@
   let startTime = Date.now();
   let currentGuestName = '';
 
-  async function trackVisitor() {
+  // Update visitor data in Firebase
+  function updateVisitor() {
     const duration = Math.floor((Date.now() - startTime) / 1000);
     
-    try {
-      await fetch(TRACKING_API, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          visitor_id: visitorId,
-          guest_name: currentGuestName,
-          page: pageName,
-          device: device,
-          browser: browser,
-          duration: duration
-        })
-      });
-    } catch (error) {
-      console.error('Tracking error:', error);
-    }
+    set(ref(database, 'visitors/' + visitorId), {
+      guestName: currentGuestName,
+      page: pageName,
+      device: device,
+      browser: browser,
+      lastSeen: Date.now(),
+      duration: duration,
+      timestamp: Date.now()
+    }).then(() => {
+      console.log('✅ Visitor tracked successfully');
+    }).catch((error) => {
+      console.error('❌ Tracking error:', error);
+    });
   }
 
+  // Hook into the existing updateGuestName function
   const originalUpdateGuestName = window.updateGuestName;
   window.updateGuestName = function() {
     if (originalUpdateGuestName) originalUpdateGuestName();
     const input = document.getElementById('guestInput');
     if (input) {
       currentGuestName = input.value.trim();
-      trackVisitor();
+      updateVisitor();
     }
   };
 
-  trackVisitor();
-  setInterval(trackVisitor, 30000);
-  window.addEventListener('beforeunload', trackVisitor);
-  </script>
+  // Initial tracking
+  updateVisitor();
+
+  // Update every 30 seconds
+  setInterval(updateVisitor, 30000);
+
+  // Remove visitor when they leave
+  onDisconnect(ref(database, 'visitors/' + visitorId)).remove();
+
+  // Track when page becomes visible/hidden
+  document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible') {
+      startTime = Date.now();
+      updateVisitor();
+    } else {
+      updateVisitor();
+    }
+  });
+</script>
+
 </body>
 </html>
