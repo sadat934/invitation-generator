@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Visitor Tracking</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
+
+    .header h1 {
+      color: #1a202c;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .header p {
+      color: #718096;
+      font-size: 1rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-card h3 {
+      color: #718096;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-card .value {
+      color: #1a202c;
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+
+    .visitors-table {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      overflow-x: auto;
+    }
+
+    .visitors-table h2 {
+      color: #1a202c;
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .filter-controls {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-controls select,
+    .filter-controls input {
+      padding: 0.5rem 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .filter-controls select:focus,
+    .filter-controls input:focus {
+      border-color: #667eea;
+    }
+
+    .refresh-btn {
+      padding: 0.5rem 1.5rem;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .refresh-btn:hover {
+      background: #5568d3;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: #f7fafc;
+    }
+
+    th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: #4a5568;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    td {
+      padding: 1rem;
+      border-top: 1px solid #e2e8f0;
+      color: #2d3748;
+    }
+
+    tbody tr:hover {
+      background: #f7fafc;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .status-online {
+      background: #c6f6d5;
+      color: #22543d;
+    }
+
+    .status-offline {
+      background: #fed7d7;
+      color: #742a2a;
+    }
+
+    .device-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 3rem;
+      color: #718096;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: #667eea;
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+
+      .header h1 {
+        font-size: 1.5rem;
+      }
+
+      .stat-card .value {
+        font-size: 2rem;
+      }
+
+      table {
+        font-size: 0.875rem;
+      }
+
+      th, td {
+        padding: 0.75rem 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>📊 Invitation Tracking Dashboard</h1>
+      <p>Monitor visitors viewing your wedding invitation cards</p>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Total Visitors</h3>
+        <div class="value" id="totalVisitors">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Online Now</h3>
+        <div class="value" id="onlineNow">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>English Version</h3>
+        <div class="value" id="englishViews">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Runyoro Version</h3>
+        <div class="value" id="runyoroViews">0</div>
+      </div>
+    </div>
+
+    <!-- Visitors Table -->
+    <div class="visitors-table">
+      <h2>Visitor Details</h2>
+      
+      <div class="filter-controls">
+        <select id="pageFilter">
+          <option value="all">All Pages</option>
+          <option value="english">English Only</option>
+          <option value="runyoro">Runyoro Only</option>
+        </select>
+        
+        <select id="statusFilter">
+          <option value="all">All Status</option>
+          <option value="online">Online</option>
+          <option value="offline">Offline</option>
+        </select>
+
+        <input type="text" id="searchInput" placeholder="Search by guest name...">
+        
+        <button class="refresh-btn" onclick="loadVisitors()">🔄 Refresh</button>
+      </div>
+
+      <div id="tableContainer">
+        <div class="loading">Loading visitor data...</div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Firebase configuration - REPLACE WITH YOUR OWN CONFIG
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getDatabase, ref, onValue, query, orderByChild } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+    // TODO: Replace with your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDobJoThr66qCjl7ULmA6q37iIPo5rSoIA",
+      authDomain: "onlinebus-b50f9.firebaseapp.com",
+      databaseURL: "https://onlinebus-b50f9-default-rtdb.firebaseio.com",
+      projectId: "onlinebus-b50f9",
+      storageBucket: "onlinebus-b50f9.firebasestorage.app",
+      messagingSenderId: "522275438422",
+      appId: "1:522275438422:web:bc748e514a1074117ea0f7"
+    };
+
+    // Initialize Firebase
+    let app, database;
+    try {
+      app = initializeApp(firebaseConfig);
+      database = getDatabase(app);
+    } catch (error) {
+      console.error("Firebase initialization error:", error);
+      document.getElementById('tableContainer').innerHTML = `
+        <div class="no-data">
+          <h3>⚠️ Firebase Not Configured</h3>
+          <p>Please set up Firebase to enable visitor tracking.</p>
+          <p style="margin-top: 1rem; font-size: 0.875rem;">See instructions in the code comments.</p>
+        </div>
+      `;
+    }
+
+    let allVisitors = [];
+
+    // Load visitors from Firebase
+    function loadVisitors() {
+      if (!database) return;
+
+      const visitorsRef = ref(database, 'visitors');
+      onValue(visitorsRef, (snapshot) => {
+        allVisitors = [];
+        const data = snapshot.val();
+        
+        if (data) {
+          Object.keys(data).forEach(key => {
+            allVisitors.push({ id: key, ...data[key] });
+          });
+        }
+
+        updateStats();
+        renderTable();
+      });
+    }
+
+    // Update statistics
+    function updateStats() {
+      const now = Date.now();
+      const onlineThreshold = 5 * 60 * 1000; // 5 minutes
+
+      const totalVisitors = allVisitors.length;
+      const onlineNow = allVisitors.filter(v => (now - v.lastSeen) < onlineThreshold).length;
+      const englishViews = allVisitors.filter(v => v.page === 'english').length;
+      const runyoroViews = allVisitors.filter(v => v.page === 'runyoro').length;
+
+      document.getElementById('totalVisitors').textContent = totalVisitors;
+      document.getElementById('onlineNow').textContent = onlineNow;
+      document.getElementById('englishViews').textContent = englishViews;
+      document.getElementById('runyoroViews').textContent = runyoroViews;
+    }
+
+    // Render visitors table
+    function renderTable() {
+      const pageFilter = document.getElementById('pageFilter')?.value || 'all';
+      const statusFilter = document.getElementById('statusFilter')?.value || 'all';
+      const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+
+      let filtered = allVisitors;
+
+      // Apply filters
+      if (pageFilter !== 'all') {
+        filtered = filtered.filter(v => v.page === pageFilter);
+      }
+
+      const now = Date.now();
+      const onlineThreshold = 5 * 60 * 1000;
+
+      if (statusFilter === 'online') {
+        filtered = filtered.filter(v => (now - v.lastSeen) < onlineThreshold);
+      } else if (statusFilter === 'offline') {
+        filtered = filtered.filter(v => (now - v.lastSeen) >= onlineThreshold);
+      }
+
+      if (searchTerm) {
+        filtered = filtered.filter(v => 
+          (v.guestName || '').toLowerCase().includes(searchTerm)
+        );
+      }
+
+      // Sort by last seen (most recent first)
+      filtered.sort((a, b) => b.lastSeen - a.lastSeen);
+
+      const tableContainer = document.getElementById('tableContainer');
+
+      if (filtered.length === 0) {
+        tableContainer.innerHTML = '<div class="no-data">No visitors found</div>';
+        return;
+      }
+
+      let html = `
+        <table>
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Guest Name</th>
+              <th>Page</th>
+              <th>Device</th>
+              <th>Browser</th>
+              <th>Last Seen</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      filtered.forEach(visitor => {
+        const isOnline = (now - visitor.lastSeen) < onlineThreshold;
+        const statusClass = isOnline ? 'status-online' : 'status-offline';
+        const statusText = isOnline ? 'Online' : 'Offline';
+
+        const lastSeen = formatTime(visitor.lastSeen);
+        const duration = formatDuration(visitor.duration || 0);
+
+        html += `
+          <tr>
+            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+            <td>${visitor.guestName || 'Anonymous'}</td>
+            <td>${visitor.page === 'english' ? '🇬🇧 English' : '🇺🇬 Runyoro'}</td>
+            <td>
+              <div class="device-icon">
+                ${getDeviceIcon(visitor.device)}
+                ${visitor.device || 'Unknown'}
+              </div>
+            </td>
+            <td>${visitor.browser || 'Unknown'}</td>
+            <td>${lastSeen}</td>
+            <td>${duration}</td>
+          </tr>
+        `;
+      });
+
+      html += '</tbody></table>';
+      tableContainer.innerHTML = html;
+    }
+
+    // Helper functions
+    function formatTime(timestamp) {
+      const date = new Date(timestamp);
+      const now = new Date();
+      const diff = now - date;
+
+      if (diff < 60000) return 'Just now';
+      if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
+      if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
+      
+      return date.toLocaleString();
+    }
+
+    function formatDuration(seconds) {
+      if (seconds < 60) return `${seconds}s`;
+      if (seconds < 3600) return `${Math.floor(seconds / 60)}m ${seconds % 60}s`;
+      return `${Math.floor(seconds / 3600)}h ${Math.floor((seconds % 3600) / 60)}m`;
+    }
+
+    function getDeviceIcon(device) {
+      if (!device) return '📱';
+      const d = device.toLowerCase();
+      if (d.includes('mobile') || d.includes('android') || d.includes('iphone')) return '📱';
+      if (d.includes('tablet') || d.includes('ipad')) return '📱';
+      return '💻';
+    }
+
+    // Event listeners
+    document.getElementById('pageFilter')?.addEventListener('change', renderTable);
+    document.getElementById('statusFilter')?.addEventListener('change', renderTable);
+    document.getElementById('searchInput')?.addEventListener('input', renderTable);
+
+    // Make loadVisitors global
+    window.loadVisitors = loadVisitors;
+
+    // Initial load
+    if (database) {
+      loadVisitors();
+      // Auto-refresh every 10 seconds
+      setInterval(loadVisitors, 10000);
+    }
+  </script>
+</body>
+</html>
