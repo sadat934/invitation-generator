@@ -271,7 +271,7 @@
   <script type="module">
     // Firebase configuration - REPLACE WITH YOUR OWN CONFIG
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-    import { getDatabase, ref, onValue, query, orderByChild } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+    import { getDatabase, ref, onValue, query, orderByChild, remove } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
     // TODO: Replace with your Firebase config
     const firebaseConfig = {
@@ -310,10 +310,24 @@
       onValue(visitorsRef, (snapshot) => {
         allVisitors = [];
         const data = snapshot.val();
+        const now = Date.now();
+        const onlineThreshold = 5 * 60 * 1000; // 5 minutes
+        const deleteThreshold = 24 * 60 * 60 * 1000; // 24 hours
         
         if (data) {
           Object.keys(data).forEach(key => {
-            allVisitors.push({ id: key, ...data[key] });
+            const visitor = { id: key, ...data[key] };
+            const timeSinceLastSeen = now - visitor.lastSeen;
+            
+            // Delete visitors older than 24 hours
+            if (timeSinceLastSeen > deleteThreshold) {
+              remove(ref(database, 'visitors/' + key));
+              return; // Skip this visitor
+            }
+            
+            // Mark as online/offline
+            visitor.isOnline = timeSinceLastSeen < onlineThreshold;
+            allVisitors.push(visitor);
           });
         }
 
@@ -328,7 +342,7 @@
       const onlineThreshold = 5 * 60 * 1000; // 5 minutes
 
       const totalVisitors = allVisitors.length;
-      const onlineNow = allVisitors.filter(v => (now - v.lastSeen) < onlineThreshold).length;
+      const onlineNow = allVisitors.filter(v => v.isOnline).length;
       const englishViews = allVisitors.filter(v => v.page === 'english').length;
       const runyoroViews = allVisitors.filter(v => v.page === 'runyoro').length;
 
@@ -351,13 +365,10 @@
         filtered = filtered.filter(v => v.page === pageFilter);
       }
 
-      const now = Date.now();
-      const onlineThreshold = 5 * 60 * 1000;
-
       if (statusFilter === 'online') {
-        filtered = filtered.filter(v => (now - v.lastSeen) < onlineThreshold);
+        filtered = filtered.filter(v => v.isOnline);
       } else if (statusFilter === 'offline') {
-        filtered = filtered.filter(v => (now - v.lastSeen) >= onlineThreshold);
+        filtered = filtered.filter(v => !v.isOnline);
       }
 
       if (searchTerm) {
@@ -376,6 +387,8 @@
         return;
       }
 
+      const now = Date.now();
+
       let html = `
         <table>
           <thead>
@@ -393,11 +406,11 @@
       `;
 
       filtered.forEach(visitor => {
-        const isOnline = (now - visitor.lastSeen) < onlineThreshold;
+        const isOnline = visitor.isOnline;
         const statusClass = isOnline ? 'status-online' : 'status-offline';
         const statusText = isOnline ? 'Online' : 'Offline';
 
-        const lastSeen = formatTime(visitor.lastSeen);
+        const lastSeen = formatLastSeen(visitor.lastSeen, isOnline);
         const duration = formatDuration(visitor.duration || 0);
 
         html += `
@@ -423,16 +436,32 @@
     }
 
     // Helper functions
-    function formatTime(timestamp) {
+    function formatLastSeen(timestamp, isOnline) {
+      if (isOnline) {
+        return 'Online now';
+      }
+      
       const date = new Date(timestamp);
       const now = new Date();
       const diff = now - date;
 
+      // Less than 1 minute
       if (diff < 60000) return 'Just now';
-      if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
-      if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
       
-      return date.toLocaleString();
+      // Less than 1 hour
+      if (diff < 3600000) {
+        const minutes = Math.floor(diff / 60000);
+        return `Last seen ${minutes}m ago`;
+      }
+      
+      // Less than 24 hours
+      if (diff < 86400000) {
+        const hours = Math.floor(diff / 3600000);
+        return `Last seen ${hours}h ago`;
+      }
+      
+      // More than 24 hours - show date and time
+      return `Last seen ${date.toLocaleString()}`;
     }
 
     function formatDuration(seconds) {
